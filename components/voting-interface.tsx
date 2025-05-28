@@ -67,9 +67,9 @@ export function VotingInterface({ showConsoleDebug = false }: VotingInterfacePro
     return parties[name] || "Independiente"
   }
 
-  // Inicializar candidatos - sin dependencias problemáticas
+  // Modificar la función initializeCandidates para agregar una verificación de null
   const initializeCandidates = useCallback(() => {
-    if (!currentContract.candidates?.length) return
+    if (!currentContract?.candidates?.length) return
 
     const initialCandidates: Candidate[] = currentContract.candidates.map((candidateName) => ({
       id: candidateName,
@@ -79,11 +79,11 @@ export function VotingInterface({ showConsoleDebug = false }: VotingInterfacePro
     }))
 
     setCandidates(initialCandidates)
-  }, [currentContract.candidates])
+  }, [currentContract?.candidates])
 
-  // Cargar resultados - sin dependencia en candidates
+  // También modificar la función loadVoteResults para agregar una verificación de null
   const loadVoteResults = useCallback(async () => {
-    if (!contractsInitialized || !currentContract.candidates?.length) return
+    if (!contractsInitialized || !currentContract?.candidates?.length) return
 
     try {
       const results = await loadResults(currentContract.candidates)
@@ -104,7 +104,7 @@ export function VotingInterface({ showConsoleDebug = false }: VotingInterfacePro
     } catch (error) {
       console.error("Error loading results:", error)
     }
-  }, [loadResults, contractsInitialized, currentContract.candidates])
+  }, [loadResults, contractsInitialized, currentContract?.candidates])
 
   // Verificar elegibilidad - sin dependencias problemáticas
   const checkUserEligibility = useCallback(async () => {
@@ -169,9 +169,11 @@ export function VotingInterface({ showConsoleDebug = false }: VotingInterfacePro
     }
   }
 
-  // RESET COMPLETO cuando cambia el contrato
+  // RESET COMPLETO cuando cambia el contrato - CORREGIDO CON NULL CHECKS
   useEffect(() => {
-    if (lastContractRef.current !== currentContract.address) {
+    const currentAddress = currentContract?.address || ""
+
+    if (lastContractRef.current !== currentAddress) {
       if (showConsoleDebug) {
         console.log("🔄 Contrato cambió, reseteando todo el estado...")
       }
@@ -189,9 +191,9 @@ export function VotingInterface({ showConsoleDebug = false }: VotingInterfacePro
       // Reset de refs
       eligibilityCheckedRef.current = false
       resultsLoadedRef.current = false
-      lastContractRef.current = currentContract.address
+      lastContractRef.current = currentAddress
     }
-  }, [currentContract.address, showConsoleDebug])
+  }, [currentContract?.address, showConsoleDebug])
 
   // Inicializar contratos cuando se conecta la wallet
   useEffect(() => {

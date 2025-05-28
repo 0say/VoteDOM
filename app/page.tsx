@@ -69,7 +69,7 @@ export default function VotingPlatform() {
         </div>
 
         {/* Navigation */}
-        <Navigation />
+        {/* <Navigation /> */}
         
         {/* Database Status */}
       {/* <DatabaseStatus /> */}
